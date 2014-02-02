@@ -18,9 +18,19 @@ $( document ).ready(function() {
             }
         });
     });
-    $('#mieszkanie-form').delegate('submit', function (event) {
-        console.log('submit')
+    content.on('submit', '#mieszkanie-form', function (event) {
         event.preventDefault();
+        var data = $(this).serializeObject();
+        console.log('submit')
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"mieszkanie",
+            data: data,
+            success: function( data ) {
+                $('.form-success').text('Mieszkanie dodane');
+                $(this).trigger('reset');
+            }.bind(this)
+        })
     });
  /*
   * Osoby
@@ -45,3 +55,20 @@ $( document ).ready(function() {
     });
  
 });
+
+$.fn.serializeObject = function()
+{
+   var o = {};
+   var a = this.serializeArray();
+   $.each(a, function() {
+       if (o[this.name]) {
+           if (!o[this.name].push) {
+               o[this.name] = [o[this.name]];
+           }
+           o[this.name].push(this.value || '');
+       } else {
+           o[this.name] = this.value || '';
+       }
+   });
+   return o;
+};
