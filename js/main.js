@@ -61,6 +61,10 @@ $( document ).ready(function() {
  
 });
 
+/**
+ * Don't move or copy
+ * @returns {String|Array|$.fn.serializeObject@pro;value}
+ */
 $.fn.serializeObject = function()
 {
    var o = {};
