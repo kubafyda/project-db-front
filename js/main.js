@@ -32,11 +32,23 @@ $( document ).ready(function() {
             type: "POST",
             url: apiUrl +"mieszkanie",
             data: data,
-            success: function( data ) {
+            success: function(data) {
                 renderMieszkanie();
             }
         })
     });
+    content.on('click', '.mieszkanie-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"mieszkanie/"+ id,
+            success: function(data) {
+                renderMieszkanie();
+            }
+        });
+    });
+   
  /*
   * Osoby
   */

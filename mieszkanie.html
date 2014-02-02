@@ -19,13 +19,17 @@
 <strong class="form-success"></strong>
 
 <table class="table">
-    <thead><tr><th>#</th><th>ulica</th><th>nr bloku</th><th>nr mieszkania</th></tr></thead>
+    <thead><tr><th>#</th><th>ulica</th><th>nr bloku</th><th>nr mieszkania</th><th>operacje</th></tr></thead>
     <% _.forEach(list, function (element) { %>
         <tr>
             <td><%= element.id %></td>
             <td><%= element.ulica %></td>
             <td><%= element.nr_bloku %></td>
             <td><%= element.nr_mieszkania %></td>
+            <td>
+                <a class="mieszkanie-delete" data-id="<%= element.id %>" href="">Usuń</a>
+                <a class="mieszkanie-update" data-id="<%= element.id %>" href="">Edytuj</a>
+            </td>
         </tr>
     <% }) %>
 </table>
