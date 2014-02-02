@@ -4,8 +4,7 @@ $( document ).ready(function() {
     var content = $('#content'),
     pageHeader = $('#header h1');
  
-    $('#nav-mieszkanie').click(function () {
-        pageHeader.text('Mieszkania');
+    var renderMieszkanie = function() {
         $.ajax({
             type: "GET",
             url: apiUrl +"mieszkanie",
@@ -17,7 +16,14 @@ $( document ).ready(function() {
                 });
             }
         });
+    };
+    $('#nav-mieszkanie').click(function () {
+        pageHeader.text('Mieszkania');
+        renderMieszkanie();
     });
+    /**
+     * Add record
+     */
     content.on('submit', '#mieszkanie-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
@@ -27,9 +33,8 @@ $( document ).ready(function() {
             url: apiUrl +"mieszkanie",
             data: data,
             success: function( data ) {
-                $('.form-success').text('Mieszkanie dodane');
-                $(this).trigger('reset');
-            }.bind(this)
+                renderMieszkanie();
+            }
         })
     });
  /*
