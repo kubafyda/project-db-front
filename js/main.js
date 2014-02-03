@@ -113,25 +113,6 @@ $( document ).ready(function() {
 /***************************************************************************
   * Ksieza
   */
- 
-//  $('#nav-ksieza').click(function () {
-//        pageHeader.text('Księża');
-//        $.ajax({
-//            type: "GET",
-//            url: apiUrl +"ksieza",
-//            success: function( data ) {
-//                $.get('ksieza.html', function (htmlTemplate) {
-//                    content.html(_.template(htmlTemplate, {
-//                       list: data.ksieza
-//                    }));
-//                });
-//            }
-//        });
-//    });
-//    $('#ksieza-form').delegate('submit', function (event) {
-//        console.log('submit')
-//        event.preventDefault();
-//    });
 var ksieza = {
         headerText: 'Księża',
         
@@ -180,17 +161,87 @@ var ksieza = {
             }
         });
     });
+    
+    
+/***************************************************************************
+  * Msze
+  */
+    var msze = {
+        headerText: 'Msze Święte',
+        
+        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o msze i wypisanie formularza i tabeli mszy */
+        render: function() {
+            pageHeader.text(this.headerText);
+            var osoby, ksieza;
+            var osobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"osoby",
+                success: function( data ) {
+                    osoby = data;
+                }
+            });
+            var ksiezaRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"ksieza",
+                success: function( data ) {
+                    ksieza = data;
+                }
+            });
+            $.when(osobyRequest, ksiezaRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"msze",
+                    success: function( data ) {
+                        $.get('msze.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.msze,
+                                osoby: osoby.osoby,
+                                ksieza: ksieza.ksieza
+                            }));
+                        });
+                    }
+                });
+            });
+            
+        }
+    };
+     $('#nav-msze').click(function () {
+        msze.render();
+    });
+    /** Add record **/
+    content.on('submit', '#msza-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        console.log('submit')
+        console.log(data)
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"msze",
+            data: data,
+            success: function() {
+                msze.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.msza-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"msze/"+ id,
+            success: function() {
+                msze.render();
+            }
+        });
+    });    
+
+    
+    
+    
+    
  
 });
-
-
-
-
-
-
-
-
-
 
 /**
  * Don't move or copy
