@@ -56,9 +56,9 @@ $( document ).ready(function() {
         pageHeader.text('Osoby');
         $.ajax({
             type: "GET",
-            url: apiUrl +"osoba",
+            url: apiUrl +"osoby",
             success: function( data ) {
-                $.get('osoba.html', function (htmlTemplate) {
+                $.get('osoby.html', function (htmlTemplate) {
                     content.html(_.template(htmlTemplate, {
                         list: data.osoby
                     }));
