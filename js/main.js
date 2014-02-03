@@ -132,6 +132,54 @@ $( document ).ready(function() {
 //        console.log('submit')
 //        event.preventDefault();
 //    });
+var ksieza = {
+        headerText: 'Księża',
+        
+        render: function() {
+            pageHeader.text(this.headerText);
+            $.ajax({
+                type: "GET",
+                url: apiUrl +"ksieza",
+                success: function( data ) {
+                    $.get('ksieza.html', function (htmlTemplate) {
+                        content.html(_.template(htmlTemplate, {
+                            list: data.ksieza
+                        }));
+                    });
+                }
+            });
+        }
+    };
+     $('#nav-ksieza').click(function () {
+        ksieza.render();
+    });
+    /** Add record **/
+    content.on('submit', '#ksiadz-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        console.log('submit')
+        console.log(data)
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"ksieza",
+            data: data,
+            success: function() {
+                ksieza.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.ksiadz-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"ksieza/"+ id,
+            success: function() {
+                ksieza.render();
+            }
+        });
+    });
  
 });
 
