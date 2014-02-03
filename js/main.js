@@ -60,19 +60,43 @@ $( document ).ready(function() {
             success: function( data ) {
                 $.get('osoba.html', function (htmlTemplate) {
                     content.html(_.template(htmlTemplate, {
-                        list: data.mieszkania
+                        list: data.osoby
                     }));
                 });
             }
         });
     });
-    $('#osoba-form').delegate('submit', function (event) {
+    $('#osoby-form').delegate('submit', function (event) {
+        console.log('submit')
+        event.preventDefault();
+    });
+ 
+
+
+/*
+  * Ksieza
+  */
+ 
+  $('#nav-ksieza').click(function () {
+        pageHeader.text('Księża');
+        $.ajax({
+            type: "GET",
+            url: apiUrl +"ksieza",
+            success: function( data ) {
+                $.get('ksieza.html', function (htmlTemplate) {
+                    content.html(_.template(htmlTemplate, {
+                       list: data.ksieza
+                    }));
+                });
+            }
+        });
+    });
+    $('#ksieza-form').delegate('submit', function (event) {
         console.log('submit')
         event.preventDefault();
     });
  
 });
-
 /**
  * Don't move or copy
  * @returns {String|Array|$.fn.serializeObject@pro;value}

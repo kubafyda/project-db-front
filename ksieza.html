@@ -1,0 +1,37 @@
+
+
+<div class="page-header"><h1>Dodaj księdza</h1></div>
+
+<form id="osoba-form">
+  <div class="form-group">
+    <label for="imie_nazwisko">Imię i nazwisko</label>
+    <input type="text" class="form-control" id="imie_nazwisko" placeholder="Imię i nazwisko" value="">
+  </div>
+  <div class="form-group">
+    <label for="data_swiecen">Data święceń</label>
+    <input type="text" class="form-control" id="data_swiecen" placeholder="Data święceń" value="">
+  </div>
+  <div class="form-group">
+    <label for="tytul">Tytuł</label>
+    <input type="text" class="form-control" id="tytul" placeholder="Tytuł" value="">
+  </div>
+    <div class="form-group">
+    <label for="funkcja_w_parafii">Funkcja w parafii</label>
+    <input type="text" class="form-control" id="funkcja_w_parafii" placeholder="Funkcja w parafii" value="">
+  </div>
+  <button type="submit" class="btn btn-default">Dodaj</button>
+</form>
+
+<table class="table">
+    <thead><tr><th>#</th><th>Imię i nazwisko</th><th>Data święceń</th><th>Tytuł</th><th>Funkcja w parafii</th></tr></thead>
+    <% _.forEach(list, function (element) { %>
+        <tr>
+            <td><%= element.id %></td>
+            <td><%= element.imie_nazwisko %></td>
+            <td><%= element.data_swiecen %></td>
+            <td><%= element.tytul %></td>
+            <td><%= element.funkcja_w_parafii %></td>
+        </tr>
+    <% }) %>
+</table>
+
