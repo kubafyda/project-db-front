@@ -1,19 +1,19 @@
 <div class="page-header"><h1>Dodaj mieszkanie</h1></div>
 
-<form action="" id="mieszkanie-form">
+<form action="" id="mieszkanie-form" data-update-id="<%= editData.id %>">
   <div class="form-group">
     <label for="ulica">Ulica</label>
-    <input type="text" class="form-control" id="ulica" name="ulica" placeholder="Ulica" value="">
+    <input type="text" class="form-control" id="ulica" name="ulica" placeholder="Ulica" value="<%= editData.ulica %>">
   </div>
   <div class="form-group">
     <label for="nr_bloku">Nr bloku</label>
-    <input type="text" class="form-control" id="nr_bloku" name="nr_bloku" placeholder="Numer bloku" value="">
+    <input type="text" class="form-control" id="nr_bloku" name="nr_bloku" placeholder="Numer bloku" value="<%= editData.nr_bloku %>">
   </div>
   <div class="form-group">
     <label for="nr_mieszkania">Numer mieszkania</label>
-    <input type="text" class="form-control" id="nr_mieszkania" name="nr_mieszkania" placeholder="Numer mieszkania" value="">
+    <input type="text" class="form-control" id="nr_mieszkania" name="nr_mieszkania" placeholder="Numer mieszkania" value="<%= editData.nr_mieszkania %>">
   </div>
-  <button type="submit" class="btn btn-default">Dodaj</button>
+  <button type="submit" class="btn btn-default"><%= (editData.id) ? 'Zapisz zmiany' : 'Dodaj' %></button>
 </form>
 
 <strong class="form-success"></strong>

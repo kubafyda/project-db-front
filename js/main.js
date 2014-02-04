@@ -11,19 +11,35 @@ $( document ).ready(function() {
      */
     var mieszkania = {
         headerText: 'Mieszkania',
+        editId: 0,
         
         render: function() {
             pageHeader.text(this.headerText);
-            $.ajax({
-                type: "GET",
-                url: apiUrl +"mieszkania",
-                success: function( data ) {
-                    $.get('mieszkania.html', function (htmlTemplate) {
-                        content.html(_.template(htmlTemplate, {
-                            list: data.mieszkania
-                        }));
-                    });
-                }
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"mieszkania/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(editRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"mieszkania",
+                    success: function( data ) {
+                        $.get('mieszkania.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.mieszkania,
+                                editData: editData
+                            }));
+                        });
+                    }
+                });
             });
         }
     };
@@ -35,14 +51,27 @@ $( document ).ready(function() {
     content.on('submit', '#mieszkanie-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"mieszkania",
-            data: data,
-            success: function() {
-                mieszkania.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"mieszkania/"+ updateId,
+                data: data,
+                success: function() {
+                    mieszkania.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"mieszkania",
+                data: data,
+                success: function() {
+                    mieszkania.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.mieszkanie-delete', function (event) {
@@ -55,6 +84,13 @@ $( document ).ready(function() {
                 mieszkania.render();
             }
         });
+    });
+    /** Edit record **/
+    content.on('click', '.mieszkanie-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        mieszkania.editId = id;
+        mieszkania.render();
     });
    
  /****************************************************************************
