@@ -1,0 +1,48 @@
+<div class="page-header"><h1>Dodaj grób</h1></div>
+
+<form action="" id="grob-form">
+  <div class="form-group">
+    <label for="osobaid">Osoba pochowana</label>
+    <select class="form-control" id="osobaid" name="osobaid">
+         <% _.forEach(osoby, function (osoba) { %>
+         <option value="<%= osoba.id %>"><%= osoba.imie_nazwisko %></option>
+         <% }) %>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="blok">Blok</label>
+    <input type="text" class="form-control" id="blok" name="blok" placeholder="Blok" value="">
+  </div>
+  <div class="form-group">
+    <label for="sektor">Sektor</label>
+    <input type="number" class="form-control" id="sektor" name="sektor" placeholder="Sektor" value="">
+  </div>
+  <div class="form-group">
+    <label for="numer">Numer</label>
+    <input type="number" class="form-control" id="numer" name="numer" placeholder="Numer" value="">
+  </div>
+  <div class="form-group">
+    <label for="data_zgonu">Data zgonu</label>
+    <input type="date" class="form-control" id="data_zgonu" name="data_zgonu" value="">
+  </div>
+  <button type="submit" class="btn btn-default">Dodaj</button>
+</form>
+
+<table class="table">
+    <thead><tr><th>#</th><th>Osoba pochowana</th><th>Blok</th><th>Sektor</th><th>Numer</th><th>Data zgonu</th></tr></thead>
+    <% _.forEach(list, function (element) { %>
+        <tr>
+            <td><%= element.id %></td>
+            <td><%= element.osoba %></td>
+            <td><%= element.blok %></td>
+            <td><%= element.sektor %></td>
+            <td><%= element.numer %></td>
+            <td><%= element.data_zgonu %></td>
+            <td>
+                <a class="grob-delete" data-id="<%= element.id %>" href="">Usuń</a>
+                <a class="grob-update" data-id="<%= element.id %>" href="">Edytuj</a>
+            </td>
+        </tr>
+    <% }) %>
+</table>
+

@@ -212,8 +212,6 @@ var ksieza = {
     content.on('submit', '#msza-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        console.log('submit')
-        console.log(data)
         $.ajax({
             type: "POST",
             url: apiUrl +"msze",
@@ -237,7 +235,66 @@ var ksieza = {
     });    
 
     
-    
+/***************************************************************************
+  * Groby
+  */
+    var groby = {
+        headerText: 'Groby',
+        
+        render: function() {
+            pageHeader.text(this.headerText);
+            var osoby;
+            var osobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"osoby",
+                success: function( data ) {
+                    osoby = data;
+                }
+            });
+            $.when(osobyRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"groby",
+                    success: function( data ) {
+                        $.get('groby.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.groby,
+                                osoby: osoby.osoby
+                            }));
+                        });
+                    }
+                });
+            });
+        }
+    };
+    $('#nav-groby').click(function () {
+        groby.render();
+    });
+    /** Add record **/
+    content.on('submit', '#grob-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"groby",
+            data: data,
+            success: function() {
+                groby.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.grob-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"groby/"+ id,
+            success: function() {
+                groby.render();
+            }
+        });
+    });   
     
     
  
