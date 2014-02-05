@@ -1,0 +1,76 @@
+<div class="page-header"><h1>Dodaj chrzest</h1></div>
+
+<form action="" id="msza-form">
+  <div class="form-group">
+    <label for="dzieckoid">Dziecko</label>
+    <select class="form-control" id="dzieckoid" name="dzieckoid">
+         <% _.forEach(osoby, function (osoba) { %>
+         <option value="<%= osoba.id %>"><%= osoba.imie_nazwisko %></option>
+         <% }) %>
+    </select>
+  </div>
+    <div class="form-group">
+    <label for="ksiadzid">Ksiądz</label>
+    <select class="form-control" id="ksiadzid" name="ksiadzid">
+         <% _.forEach(ksieza, function (ksiadz) { %>
+         <option value="<%= ksiadz.id %>"><%= ksiadz.imie_nazwisko %></option>
+         <% }) %>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="dane_matki">Dane matki dziecka</label>
+    <input type="text" class="form-control" id="dane_matki" name="dane_matki" placeholder="Dane matki" value="">
+  </div>
+     <div class="form-group">
+    <label for="dane_ojca">Dane ojca dziecka</label>
+    <input type="text" class="form-control" id="dane_ojca" name="dane_ojca" placeholder="Dane ojca" value="">
+  </div>
+     <div class="form-group">
+    <label for="dane_chrzestnej">Dane matki chrzestnej dziecka</label>
+    <input type="text" class="form-control" id="dane_chzestnej" name="dane_chrzestnej" placeholder="Dane chrzestnej" value="">
+  </div>
+     <div class="form-group">
+    <label for="dane_chrzestnego">Dane ojca chrzestnego dziecka</label>
+    <input type="text" class="form-control" id="dane_chrzestnego" name="dane_chrzestnego" placeholder="Dane chrzestnego" value="">
+  </div>
+    
+   <!-- dane do tabeli sakramenty -->
+   
+     <div class="form-group">
+    <label for="miejsce_sakramentu">Miejsce sprawowania sakramentu</label>
+    <input type="text" class="form-control" id="miejsce_sakramentu" name="miejsce_sakramentu" placeholder="Miejsce sakramentu" value="">
+  </div>
+     <div class="form-group">
+    <label for="data">Data i godzina sakramentu</label>
+    <input type="text" class="form-control" id="data" name="data" placeholder="2000-01-01 18:00" value="">
+  </div>
+  <div class="form-group">
+    <label for="ofiara">Ofiara</label>
+    <input type="number" class="form-control" id="ofiara" name="ofiara" placeholder="Ofiara" value="">
+  </div>
+  <button type="submit" class="btn btn-default">Dodaj</button>
+</form>
+
+<table class="table">
+    <thead><tr><th>#</th><th>Dziecko</th><th>Ksiądz</th><th>Dane matki</th><th>Dane ojca</th>
+            <th>Dane chrzestnej</th><th>Dane chrzestnego</th><th>Miejsce sakramentu</th><th>Data</th><th>Ofiara</th><th>Opcje</th></tr></thead>
+    <% _.forEach(list, function (element) { %>
+        <tr>
+            <td><%= element.id %></td>
+            <td><%= element.dzieckoid %></td>
+            <td><%= element.ksiadzid %></td>
+            <td><%= element.dane_matki %></td>
+            <td><%= element.dane_ojca %></td>
+            <td><%= element.dane_chrzestnej %></td>
+            <td><%= element.dane_chrzestnego %></td>
+            <td><%= element.miejsce_sakramentu %></td>
+            <td><%= element.data %></td>
+            <td><%= element.ofiara %></td>
+            <td>
+                <a class="chrzest-delete" data-id="<%= element.id %>" href="">Usuń</a>
+                <a class="chrzest-update" data-id="<%= element.id %>" href="">Edytuj</a>
+            </td>
+        </tr>
+    <% }) %>
+</table>
+

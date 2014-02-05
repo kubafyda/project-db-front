@@ -332,7 +332,151 @@ var ksieza = {
         });
     });   
     
+   /***************************************************************************
+  * Chrzty
+  */
+    var chrzty = {
+        headerText: 'Chrzty',
+        
+        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o chrzty */
+        render: function() {
+            pageHeader.text(this.headerText);
+            var osoby, ksieza;
+            var osobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"osoby",
+                success: function( data ) {
+                    osoby = data;
+                }
+            });
+            var ksiezaRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"ksieza",
+                success: function( data ) {
+                    ksieza = data;
+                }
+            });
+            
+             
+            
+            $.when(osobyRequest, ksiezaRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"chrzty",
+                    success: function( data ) {
+                        $.get('chrzty.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.chrzty,
+                                //sakramenty: data.sakramenty,
+                                osoby: osoby.osoby,
+                                ksieza: ksieza.ksieza
+                            }));
+                        });
+                    }
+                });
+            });
+            
+        }
+    };
+     $('#nav-chrzty').click(function () {
+        chrzty.render();
+    });
+    /** Add record **/
+    content.on('submit', '#chrzest-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"chrzty",
+            data: data,
+            success: function() {
+                chrzty.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.chrzest-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"chrzty/"+ id,
+            success: function() {
+                chrzty.render();
+            }
+        });
+    });     
     
+     /***************************************************************************
+  * Śluby
+  */
+    var sluby = {
+        headerText: 'Sluby',
+        
+        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o sluby */
+        render: function() {
+            pageHeader.text(this.headerText);
+            var osoby, ksieza;
+            var osobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"osoby",
+                success: function( data ) {
+                    osoby = data;
+                }
+            });
+            var ksiezaRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"ksieza",
+                success: function( data ) {
+                    ksieza = data;
+                }
+            });
+            $.when(osobyRequest, ksiezaRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"sluby",
+                    success: function( data ) {
+                        $.get('sluby.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.sluby,
+                                osoby: osoby.osoby,
+                                ksieza: ksieza.ksieza
+                            }));
+                        });
+                    }
+                });
+            });
+            
+        }
+    };
+     $('#nav-sluby').click(function () {
+        sluby.render();
+    });
+    /** Add record **/
+    content.on('submit', '#slub-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"sluby",
+            data: data,
+            success: function() {
+                sluby.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.slub-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"sluby/"+ id,
+            success: function() {
+                sluby.render();
+            }
+        });
+    }); 
  
 });
 
