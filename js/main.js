@@ -84,7 +84,7 @@ $( document ).ready(function() {
                 mieszkania.render();
             }
         });
-    });
+    });    
     /** Edit record **/
     content.on('click', '.mieszkanie-update', function (event) {
         event.preventDefault();
@@ -98,39 +98,67 @@ $( document ).ready(function() {
   */
     var osoby = {
         headerText: 'Osoby',
+        editId: 0,
         
         render: function() {
             pageHeader.text(this.headerText);
-            $.ajax({
-                type: "GET",
-                url: apiUrl +"osoby",
-                success: function( data ) {
-                    $.get('osoby.html', function (htmlTemplate) {
-                        content.html(_.template(htmlTemplate, {
-                            list: data.osoby
-                        }));
-                    });
-                }
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"osoby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(editRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"osoby",
+                    success: function( data ) {
+                        $.get('osoby.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.osoby,
+                                editData: editData
+                            }));
+                        });
+                    }
+                });
             });
         }
     };
-     $('#nav-osoby').click(function () {
+ 
+    $('#nav-osoby').click(function () {
         osoby.render();
     });
     /** Add record **/
     content.on('submit', '#osoba-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        console.log('submit')
-        console.log(data)
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"osoby",
-            data: data,
-            success: function() {
-                osoby.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"osoby/"+ updateId,
+                data: data,
+                success: function() {
+                    osoby.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"osoby",
+                data: data,
+                success: function() {
+                    osoby.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.osoba-delete', function (event) {
@@ -144,46 +172,80 @@ $( document ).ready(function() {
             }
         });
     });
-
+    /** Edit record **/
+    content.on('click', '.osoba-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        osoby.editId = id;
+        osoby.render();
+    });
 
 /***************************************************************************
   * Ksieza
   */
 var ksieza = {
         headerText: 'Księża',
+        editId: 0,
         
         render: function() {
             pageHeader.text(this.headerText);
-            $.ajax({
-                type: "GET",
-                url: apiUrl +"ksieza",
-                success: function( data ) {
-                    $.get('ksieza.html', function (htmlTemplate) {
-                        content.html(_.template(htmlTemplate, {
-                            list: data.ksieza
-                        }));
-                    });
-                }
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"ksieza/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(editRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"ksieza",
+                    success: function( data ) {
+                        $.get('ksieza.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.ksieza,
+                                editData: editData
+                            }));
+                        });
+                    }
+                });
             });
         }
     };
-     $('#nav-ksieza').click(function () {
+ 
+    $('#nav-ksieza').click(function () {
         ksieza.render();
     });
     /** Add record **/
     content.on('submit', '#ksiadz-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        console.log('submit')
-        console.log(data)
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"ksieza",
-            data: data,
-            success: function() {
-                ksieza.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"ksieza/"+ updateId,
+                data: data,
+                success: function() {
+                    ksieza.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"ksieza",
+                data: data,
+                success: function() {
+                    ksieza.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.ksiadz-delete', function (event) {
@@ -197,33 +259,53 @@ var ksieza = {
             }
         });
     });
-    
+    /** Edit record **/
+    content.on('click', '.ksiadz-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        ksieza.editId = id;
+        ksieza.render();
+    });
     
 /***************************************************************************
   * Msze
   */
-    var msze = {
+     var msze = {
         headerText: 'Msze Święte',
+        editId: 0,
         
-        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o msze i wypisanie formularza i tabeli mszy */
         render: function() {
             pageHeader.text(this.headerText);
             var osoby, ksieza;
+            var editData = {};
+            var editRequest = true;
+           
             var osobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"osoby",
                 success: function( data ) {
                     osoby = data;
                 }
-            });
+              });  
             var ksiezaRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"ksieza",
                 success: function( data ) {
                     ksieza = data;
-                }
-            });
-            $.when(osobyRequest, ksiezaRequest).then(function () {
+                } 
+           });
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"msze/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            
+            $.when(osobyRequest, ksiezaRequest, editRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"msze",
@@ -232,30 +314,44 @@ var ksieza = {
                             content.html(_.template(htmlTemplate, {
                                 list: data.msze,
                                 osoby: osoby.osoby,
-                                ksieza: ksieza.ksieza
+                                ksieza: ksieza.ksieza,
+                                editData: editData
                             }));
                         });
                     }
                 });
             });
-            
         }
     };
-     $('#nav-msze').click(function () {
+ 
+    $('#nav-msze').click(function () {
         msze.render();
     });
     /** Add record **/
     content.on('submit', '#msza-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"msze",
-            data: data,
-            success: function() {
-                msze.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"msze/"+ updateId,
+                data: data,
+                success: function() {
+                    msze.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"msze",
+                data: data,
+                success: function() {
+                    msze.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.msza-delete', function (event) {
@@ -269,6 +365,13 @@ var ksieza = {
             }
         });
     });    
+    /** Edit record **/
+    content.on('click', '.msza-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        msze.editId = id;
+        msze.render();
+    });
 
     
 /***************************************************************************
@@ -276,10 +379,13 @@ var ksieza = {
   */
     var groby = {
         headerText: 'Groby',
+        editId: 0,
         
         render: function() {
             pageHeader.text(this.headerText);
             var osoby;
+            var editData = {};
+            
             var osobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"osoby",
@@ -287,7 +393,18 @@ var ksieza = {
                     osoby = data;
                 }
             });
-            $.when(osobyRequest).then(function () {
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"groby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(osobyRequest, editRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"groby",
@@ -295,7 +412,8 @@ var ksieza = {
                         $.get('groby.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.groby,
-                                osoby: osoby.osoby
+                                osoby: osoby.osoby,
+                                editData: editData
                             }));
                         });
                     }
@@ -303,6 +421,7 @@ var ksieza = {
             });
         }
     };
+ 
     $('#nav-groby').click(function () {
         groby.render();
     });
@@ -310,14 +429,27 @@ var ksieza = {
     content.on('submit', '#grob-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"groby",
-            data: data,
-            success: function() {
-                groby.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"groby/"+ updateId,
+                data: data,
+                success: function() {
+                    groby.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"groby",
+                data: data,
+                success: function() {
+                    groby.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.grob-delete', function (event) {
@@ -330,15 +462,22 @@ var ksieza = {
                 groby.render();
             }
         });
-    });   
+    });    
+    /** Edit record **/
+    content.on('click', '.grob-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        groby.editId = id;
+        groby.render();
+    });
     
    /***************************************************************************
   * Chrzty
   */
     var chrzty = {
         headerText: 'Chrzty',
+        editId: 0,
         
-        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o chrzty */
         render: function() {
             pageHeader.text(this.headerText);
             var osoby, ksieza;
@@ -355,11 +494,21 @@ var ksieza = {
                 success: function( data ) {
                     ksieza = data;
                 }
-            });
-            
-             
-            
-            $.when(osobyRequest, ksiezaRequest).then(function () {
+            });     
+                    
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"chrzty/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(osobyRequest, ksiezaRequest, editRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"chrzty",
@@ -367,32 +516,45 @@ var ksieza = {
                         $.get('chrzty.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.chrzty,
-                                //sakramenty: data.sakramenty,
                                 osoby: osoby.osoby,
-                                ksieza: ksieza.ksieza
+                                ksieza: ksieza.ksieza,
+                                editData: editData
                             }));
                         });
                     }
                 });
             });
-            
         }
     };
-     $('#nav-chrzty').click(function () {
+ 
+    $('#nav-chrzty').click(function () {
         chrzty.render();
     });
     /** Add record **/
     content.on('submit', '#chrzest-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"chrzty",
-            data: data,
-            success: function() {
-                chrzty.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"chrzty/"+ updateId,
+                data: data,
+                success: function() {
+                    chrzty.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"chrzty",
+                data: data,
+                success: function() {
+                    chrzty.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.chrzest-delete', function (event) {
@@ -405,18 +567,27 @@ var ksieza = {
                 chrzty.render();
             }
         });
-    });     
+    });    
+    /** Edit record **/
+    content.on('click', '.chrzest-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        chrzty.editId = id;
+        chrzty.render();
+    });
     
      /***************************************************************************
   * Śluby
   */
     var sluby = {
-        headerText: 'Sluby',
+        headerText: 'Śluby',
+        editId: 0,
         
-        /* Zapytania najpierw o liste osób oraz listę księzy i potem zapytanie o sluby */
         render: function() {
             pageHeader.text(this.headerText);
             var osoby, ksieza;
+            var editData = {};
+            
             var osobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"osoby",
@@ -431,7 +602,18 @@ var ksieza = {
                     ksieza = data;
                 }
             });
-            $.when(osobyRequest, ksiezaRequest).then(function () {
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"sluby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(osobyRequest, ksiezaRequest, editRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"sluby",
@@ -440,30 +622,44 @@ var ksieza = {
                             content.html(_.template(htmlTemplate, {
                                 list: data.sluby,
                                 osoby: osoby.osoby,
-                                ksieza: ksieza.ksieza
+                                ksieza: ksieza.ksieza,
+                                editData: editData
                             }));
                         });
                     }
                 });
             });
-            
         }
     };
-     $('#nav-sluby').click(function () {
+ 
+    $('#nav-sluby').click(function () {
         sluby.render();
     });
     /** Add record **/
     content.on('submit', '#slub-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"sluby",
-            data: data,
-            success: function() {
-                sluby.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"sluby/"+ updateId,
+                data: data,
+                success: function() {
+                    sluby.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"sluby",
+                data: data,
+                success: function() {
+                    sluby.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
     content.on('click', '.slub-delete', function (event) {
@@ -476,20 +672,27 @@ var ksieza = {
                 sluby.render();
             }
         });
-    }); 
- 
+    });    
+    /** Edit record **/
+    content.on('click', '.slub-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        sluby.editId = id;
+        sluby.render();
+    });
  
  /***************************************************************************
   * Pogrzeby
   */
     var pogrzeby = {
         headerText: 'Pogrzeby',
+        editId: 0,
         
-        /* Zapytania najpierw o liste osób, listę księzy, groby i potem zapytanie o pogrzeby */
         render: function() {
             pageHeader.text(this.headerText);
             var osoby, ksieza, groby;
-            
+            var editData = {};
+           
             var osobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"osoby",
@@ -504,17 +707,27 @@ var ksieza = {
                     ksieza = data;
                 }
             });
-          /*  var grobyRequest = $.ajax({
+            var grobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"groby",
                 success: function( data ) {
                     groby = data;
                 }
             });
-           */ 
-             
             
-            $.when(osobyRequest, ksiezaRequest, grobyRequest).then(function () {
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"pogrzeby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
+        
+            $.when(osobyRequest, ksiezaRequest, grobyRequest, editRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"pogrzeby",
@@ -522,36 +735,49 @@ var ksieza = {
                         $.get('pogrzeby.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.pogrzeby,
-                                //sakramenty: data.sakramenty,
                                 osoby: osoby.osoby,
-                                ksieza: ksieza.ksieza
-                              //  groby: groby.groby
+                                ksieza: ksieza.ksieza,
+                                groby: groby.groby,
+                                editData: editData
                             }));
                         });
                     }
                 });
             });
-            
         }
     };
-     $('#nav-pogrzeby').click(function () {
+ 
+    $('#nav-pogrzeby').click(function () {
         pogrzeby.render();
     });
     /** Add record **/
-    content.on('submit', '#chrzest-form', function (event) {
+    content.on('submit', '#pogrzeb-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"pogrzeby",
-            data: data,
-            success: function() {
-                pogrzeby.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"pogrzeby/"+ updateId,
+                data: data,
+                success: function() {
+                    pogrzeby.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"pogrzeby",
+                data: data,
+                success: function() {
+                    pogrzeby.render();
+                }
+            });
+        }
+        
     });
     /** Delete record **/
-    content.on('click', '.chrzest-delete', function (event) {
+    content.on('click', '.pogrzeb-delete', function (event) {
         event.preventDefault();
         var id = $(event.target).data('id');
         $.ajax({
@@ -561,7 +787,14 @@ var ksieza = {
                 pogrzeby.render();
             }
         });
-    });     
+    });    
+    /** Edit record **/
+    content.on('click', '.pogrzeb-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        pogrzeby.editId = id;
+        pogrzeby.render();
+    });
     
 });
 

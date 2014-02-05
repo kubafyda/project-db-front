@@ -1,6 +1,6 @@
 <div class="page-header"><h1>Dodaj pogrzeb</h1></div>
 
-<form action="" id="pogrzeb-form">
+<form action="" id="pogrzeb-form" data-update-id="<%= editData.id %>">
   <div class="form-group">
     <label for="osobaid">Osoba zamawiająca</label>
     <select class="form-control" id="osobaid" name="osobaid">
@@ -28,18 +28,18 @@
  
   <div class="form-group">
     <label for="miejsce_sakramentu">Miejsce sprawowania sakramentu</label>
-    <input type="text" class="form-control" id="miejsce_sakramentu" name="miejsce_sakramentu" placeholder="Miejsce sakramentu" value="">
+    <input type="text" class="form-control" id="miejsce_sakramentu" name="miejsce_sakramentu" placeholder="Miejsce sakramentu" value="<%= editData.miejsce_sakramentu %>">
   </div>
      <div class="form-group">
     <label for="data">Data i godzina sakramentu</label>
-    <input type="text" class="form-control" id="data" name="data" placeholder="2000-01-01 18:00" value="">
+    <input type="text" class="form-control" id="data" name="data" placeholder="2000-01-01 18:00" value="<%= editData.data %>">
   </div>
   <div class="form-group">
     <label for="ofiara">Ofiara</label>
-    <input type="number" class="form-control" id="ofiara" name="ofiara" placeholder="Ofiara" value="">
+    <input type="number" class="form-control" id="ofiara" name="ofiara" placeholder="Ofiara" value="<%= editData.ofiara %>">
   </div>
     
-  <button type="submit" class="btn btn-default">Dodaj</button>
+  <button type="submit" class="btn btn-default"><%= (editData.id) ? 'Zapisz zmiany' : 'Dodaj' %></button>
 </form>
 
 <table class="table">
