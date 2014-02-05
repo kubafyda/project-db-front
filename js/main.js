@@ -357,8 +357,6 @@ var ksieza = {
                 }
             });
             
-             
-            
             $.when(osobyRequest, ksiezaRequest).then(function () {
                 $.ajax({
                     type: "GET",
@@ -367,7 +365,6 @@ var ksieza = {
                         $.get('chrzty.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.chrzty,
-                                //sakramenty: data.sakramenty,
                                 osoby: osoby.osoby,
                                 ksieza: ksieza.ksieza
                             }));
@@ -484,6 +481,7 @@ var ksieza = {
   */
     var pogrzeby = {
         headerText: 'Pogrzeby',
+        editId: 0,
         
         /* Zapytania najpierw o liste osób, listę księzy, groby i potem zapytanie o pogrzeby */
         render: function() {
@@ -504,17 +502,27 @@ var ksieza = {
                     ksieza = data;
                 }
             });
-          /*  var grobyRequest = $.ajax({
+            var grobyRequest = $.ajax({
                 type: "GET",
                 url: apiUrl +"groby",
                 success: function( data ) {
                     groby = data;
                 }
             });
-           */ 
-             
-            
-            $.when(osobyRequest, ksiezaRequest, grobyRequest).then(function () {
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"pogrzeby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                        console.log(editData)
+                    }
+                });
+                this.editId = 0;
+            }
+            $.when(editRequest, osobyRequest, ksiezaRequest, grobyRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"pogrzeby",
@@ -522,10 +530,10 @@ var ksieza = {
                         $.get('pogrzeby.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.pogrzeby,
-                                //sakramenty: data.sakramenty,
                                 osoby: osoby.osoby,
-                                ksieza: ksieza.ksieza
-                              //  groby: groby.groby
+                                ksieza: ksieza.ksieza,
+                                groby: groby.groby,
+                                editData: editData
                             }));
                         });
                     }
@@ -538,20 +546,32 @@ var ksieza = {
         pogrzeby.render();
     });
     /** Add record **/
-    content.on('submit', '#chrzest-form', function (event) {
+    content.on('submit', '#pogrzeb-form', function (event) {
         event.preventDefault();
         var data = $(this).serializeObject();
-        $.ajax({
-            type: "POST",
-            url: apiUrl +"pogrzeby",
-            data: data,
-            success: function() {
-                pogrzeby.render();
-            }
-        })
+        var updateId = $(this).data('update-id');
+        if(updateId) {
+            $.ajax({
+                type: "PUT",
+                url: apiUrl +"pogrzeby/"+ updateId,
+                data: data,
+                success: function() {
+                    pogrzeby.render();
+                }
+            });
+        } else {
+            $.ajax({
+                type: "POST",
+                url: apiUrl +"pogrzeby",
+                data: data,
+                success: function() {
+                    pogrzeby.render();
+                }
+            });
+        }
     });
     /** Delete record **/
-    content.on('click', '.chrzest-delete', function (event) {
+    content.on('click', '.pogrzeb-delete', function (event) {
         event.preventDefault();
         var id = $(event.target).data('id');
         $.ajax({
@@ -562,6 +582,18 @@ var ksieza = {
             }
         });
     });     
+    /** Edit record **/
+    content.on('click', '.pogrzeb-update', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        pogrzeby.editId = id;
+        pogrzeby.render();
+    });
+    
+    
+    
+    
+    
     
 });
 
