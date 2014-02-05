@@ -478,6 +478,91 @@ var ksieza = {
         });
     }); 
  
+ 
+ /***************************************************************************
+  * Pogrzeby
+  */
+    var pogrzeby = {
+        headerText: 'Pogrzeby',
+        
+        /* Zapytania najpierw o liste osób, listę księzy, groby i potem zapytanie o pogrzeby */
+        render: function() {
+            pageHeader.text(this.headerText);
+            var osoby, ksieza, groby;
+            
+            var osobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"osoby",
+                success: function( data ) {
+                    osoby = data;
+                }
+            });
+            var ksiezaRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"ksieza",
+                success: function( data ) {
+                    ksieza = data;
+                }
+            });
+          /*  var grobyRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"groby",
+                success: function( data ) {
+                    groby = data;
+                }
+            });
+           */ 
+             
+            
+            $.when(osobyRequest, ksiezaRequest, grobyRequest).then(function () {
+                $.ajax({
+                    type: "GET",
+                    url: apiUrl +"pogrzeby",
+                    success: function( data ) {
+                        $.get('pogrzeby.html', function (htmlTemplate) {
+                            content.html(_.template(htmlTemplate, {
+                                list: data.pogrzeby,
+                                //sakramenty: data.sakramenty,
+                                osoby: osoby.osoby,
+                                ksieza: ksieza.ksieza
+                              //  groby: groby.groby
+                            }));
+                        });
+                    }
+                });
+            });
+            
+        }
+    };
+     $('#nav-pogrzeby').click(function () {
+        pogrzeby.render();
+    });
+    /** Add record **/
+    content.on('submit', '#chrzest-form', function (event) {
+        event.preventDefault();
+        var data = $(this).serializeObject();
+        $.ajax({
+            type: "POST",
+            url: apiUrl +"pogrzeby",
+            data: data,
+            success: function() {
+                pogrzeby.render();
+            }
+        })
+    });
+    /** Delete record **/
+    content.on('click', '.chrzest-delete', function (event) {
+        event.preventDefault();
+        var id = $(event.target).data('id');
+        $.ajax({
+            type: "DELETE",
+            url: apiUrl +"pogrzeby/"+ id,
+            success: function() {
+                pogrzeby.render();
+            }
+        });
+    });     
+    
 });
 
 /**

@@ -5,7 +5,9 @@
     <label for="osobaid">Osoba pochowana</label>
     <select class="form-control" id="osobaid" name="osobaid">
          <% _.forEach(osoby, function (osoba) { %>
-         <option value="<%= osoba.id %>"><%= osoba.imie_nazwisko %></option>
+         <option value=""></option>
+         
+       <!--  <%= osoba.imie_nazwisko %>-->
          <% }) %>
     </select>
   </div>
