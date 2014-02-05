@@ -1,17 +1,17 @@
 <div class="page-header"><h1>Dodaj osobę</h1></div>
 
-<form action="" id="osoba-form">
+<form action="" id="osoba-form" data-update-id="<%= editData.id %>">
   <div class="form-group">
     <label for="imie_nazwisko">Imię i nazwisko</label>
-    <input type="text" class="form-control" id="imie_nazwisko" name="imie_nazwisko" placeholder="Imię i nazwisko" value="">
+    <input type="text" class="form-control" id="imie_nazwisko" name="imie_nazwisko" placeholder="Imię i nazwisko" value="<%= editData.imie_nazwisko %>">
   </div>
   <div class="form-group">
     <label for="data_urodzenia">Data urodzenia</label>
-    <input type="date" class="form-control" id="data_urodzenia" name="data_urodzenia" value="2000-01-01">
+    <input type="date" class="form-control" id="data_urodzenia" name="data_urodzenia" value="<%= editData.data_urodzenia %>">
   </div>
   <div class="form-group">
     <label for="zawod">Zawód</label>
-    <input type="text" class="form-control" id="zawod" name="zawod" placeholder="Zawód" value="">
+    <input type="text" class="form-control" id="zawod" name="zawod" placeholder="Zawód" value="<%= editData.zawod %>">
   </div>
     <div class="form-group">
     <label for="parafianin">Parafianin</label>
@@ -27,7 +27,7 @@
         <option value="0">Nie</option>
     </select>
   </div>
-  <button type="submit" class="btn btn-default">Dodaj</button>
+  <button type="submit" class="btn btn-default"><%= (editData.id) ? 'Zapisz zmiany' : 'Dodaj' %></button>
 </form>
 
 <table class="table">
