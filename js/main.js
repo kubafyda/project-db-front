@@ -505,6 +505,18 @@ var ksieza = {
                     ksieza = data;
                 }
             });
+            var editData = {};
+            var editRequest = true;
+            if(this.editId) {
+                editRequest = $.ajax({
+                    type: "GET",
+                    url: apiUrl +"groby/"+ this.editId,
+                    success: function (data) {
+                        editData = data.rekord;
+                    }
+                });
+                this.editId = 0;
+            }
             
             $.when(osobyRequest, ksiezaRequest, editRequest).then(function () {
                 $.ajax({
