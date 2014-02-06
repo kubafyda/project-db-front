@@ -102,6 +102,14 @@ $( document ).ready(function() {
         
         render: function() {
             pageHeader.text(this.headerText);
+            var mieszkania;
+            var mieszkaniaRequest = $.ajax({
+                type: "GET",
+                url: apiUrl +"mieszkania",
+                success: function( data ) {
+                    mieszkania = data.mieszkania;
+                }
+            });  
             var editData = {};
             var editRequest = true;
             if(this.editId) {
@@ -114,7 +122,7 @@ $( document ).ready(function() {
                 });
                 this.editId = 0;
             }
-            $.when(editRequest).then(function () {
+            $.when(editRequest, mieszkaniaRequest).then(function () {
                 $.ajax({
                     type: "GET",
                     url: apiUrl +"osoby",
@@ -122,6 +130,7 @@ $( document ).ready(function() {
                         $.get('osoby.html', function (htmlTemplate) {
                             content.html(_.template(htmlTemplate, {
                                 list: data.osoby,
+                                mieszkania: mieszkania,
                                 editData: editData
                             }));
                         });
@@ -140,6 +149,7 @@ $( document ).ready(function() {
         var data = $(this).serializeObject();
         var updateId = $(this).data('update-id');
         if(updateId) {
+            console.log('update')
             $.ajax({
                 type: "PUT",
                 url: apiUrl +"osoby/"+ updateId,
